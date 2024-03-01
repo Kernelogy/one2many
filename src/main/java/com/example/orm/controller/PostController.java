@@ -38,6 +38,14 @@ public class PostController {
 				.status(HttpStatus.OK)
 				.body(savedPost);		
 	}
+	@GetMapping("/getAll")
+	public ResponseEntity<?> getAllPosts(){
+		List<Post> post = postRepo.findAll();
+		return ResponseEntity
+				.status(HttpStatus.OK)
+				.body(post);
+		
+	}
 	@GetMapping("/get/{postId}")
 	public ResponseEntity<?> getPost(@PathVariable int postId){
 		Post post = postRepo.findById(postId).get();
@@ -46,11 +54,24 @@ public class PostController {
 				.body(post);
 		
 	}
+	@GetMapping("/get/all/{ownerId}")
+	public ResponseEntity<?> getAllPost(@PathVariable int ownerId){
+		List<Post> posts = postRepo.findAllOwnersPost(ownerId);
+		return ResponseEntity
+				.status(HttpStatus.OK)
+				.body(posts);
+		
+	}
 	@GetMapping("/list/{page}/{size}")
 	public ResponseEntity<?> getPostsPage(@PathVariable int page, @PathVariable int size){
+		PageRequest.of(2, 3);
 		
 //		List<Post> posts = postRepo.findAll(PageRequest.of(page, size)).toList();
-		List<Post> posts = postRepo.findAll(PageRequest.of(page, size, Sort.by("postId").descending())).toList();
+		List<Post> posts = postRepo.findAll(
+				PageRequest.of(
+						page, size, 
+						Sort.by("postId").descending()
+						)).toList();
 		return ResponseEntity
 				.status(HttpStatus.OK)
 				.body(posts);
